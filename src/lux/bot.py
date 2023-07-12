@@ -59,8 +59,8 @@ class Lux(InteractionBot):
         super().unload_extension(name, package=package)
 
     def init(self) -> "Self":
-        self.load_extensions(self.config.extension_directory)
         bot.set(self)
+        self.load_extensions(self.config.extension_directory)
         return self
 
     def run(self, *args: "Any", **kwargs: "Any") -> None:
