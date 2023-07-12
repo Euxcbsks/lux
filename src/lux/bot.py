@@ -2,13 +2,20 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from disnake.ext.commands import InteractionBot
+from disnake.ext.commands.errors import (
+    ExtensionAlreadyLoaded,
+    ExtensionFailed,
+    ExtensionNotFound,
+    ExtensionNotLoaded,
+    NoEntryPointError,
+)
 
 from .context_var import bot, env, interaction
 from .logger import default_logger
 
 if TYPE_CHECKING:
     from logging import Logger
-    from typing import Any, Self
+    from typing import Any, Callable, Self
 
     from disnake import AppCmdInter
 
@@ -38,25 +45,43 @@ class Lux(InteractionBot):
     def unloaded_extensions(self) -> list[str]:
         return self._unloaded_extensions
 
+    def _try_extension(
+        self, operation: "Callable", name: str, *, package: str | None = None
+    ):
+        logger = self.logger
+
+        try:
+            operation(name, package=package)
+        except ExtensionNotFound:
+            logger.error(f"Extension '{name}' not found")
+        except ExtensionNotLoaded:
+            logger.error(f"Extension '{name}' not loaded")
+        except ExtensionAlreadyLoaded:
+            logger.error(f"Extension '{name}' already loaded")
+        except NoEntryPointError:
+            logger.error(f"Extension '{name}' has no entry point ('setup' function)")
+        except ExtensionFailed as e:
+            logger.exception(f"Extension '{name}' failed to load", e)
+
     def load_extension(self, name: str, *, package: str | None = None) -> None:
-        self.logger.info(f"Loading extension {name}")
-        super().load_extension(name, package=package)
+        self.logger.info(f"Loading extension '{name}'")
+        self._try_extension(super().load_extension, name, package=package)
 
     def load_extensions(self, path: str) -> None:
-        if not (path_ := Path(path)).exists():
-            raise ValueError(f"Provided path '{path_.resolve()}' does not exist")
+        if not (path_ := Path(path).resolve()).exists():
+            raise ValueError(f"Provided path '{path_}' does not exist")
 
-        self.logger.info(f"Loading extensions from '{path_.resolve()}'")
+        self.logger.info(f"Loading extensions from '{path_}'")
         super().load_extensions(path)
 
     def reload_extension(self, name: str, *, package: str | None = None) -> None:
-        self.logger.info(f"Reloading extension {name}")
-        super().reload_extension(name, package=package)
+        self.logger.info(f"Reloading extension '{name}'")
+        self._try_extension(super().reload_extension, name, package=package)
 
     def unload_extension(self, name: str, *, package: str | None = None) -> None:
-        self.logger.info(f"Unloading extension {name}")
+        self.logger.info(f"Unloading extension '{name}'")
         self._unloaded_extensions.append(name)
-        super().unload_extension(name, package=package)
+        self._try_extension(super().unload_extension, name, package=package)
 
     def init(self) -> "Self":
         bot.set(self)
