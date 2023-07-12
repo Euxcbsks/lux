@@ -10,4 +10,3 @@ test_guilds = []
 
 [production]
 extension_directory = "extension"
-test_guilds = []
