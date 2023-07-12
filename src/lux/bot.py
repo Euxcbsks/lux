@@ -32,6 +32,11 @@ class Lux(InteractionBot):
         self.mode = mode
         self.config = config
         self.logger = logger
+        self._unloaded_extensions = list[str]()
+
+    @property
+    def unloaded_extensions(self) -> list[str]:
+        return self._unloaded_extensions
 
     def load_extension(self, name: str, *, package: str | None = None) -> None:
         self.logger.info(f"Loading extension {name}")
@@ -50,6 +55,7 @@ class Lux(InteractionBot):
 
     def unload_extension(self, name: str, *, package: str | None = None) -> None:
         self.logger.info(f"Unloading extension {name}")
+        self._unloaded_extensions.append(name)
         super().unload_extension(name, package=package)
 
     def init(self) -> "Self":

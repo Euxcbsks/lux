@@ -22,3 +22,7 @@ def dict_(mapping: "Mapping[str, str]", user_input: str | None):
 
 async def loaded_extension(inter: "AppCmdInter", user_input: str | None = None):
     return list_(bot.get().cogs.keys(), user_input)
+
+
+async def unloaded_extension(inter: "AppCmdInter", user_input: str | None = None):
+    return list_(bot.get().unloaded_extensions, user_input)
