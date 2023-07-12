@@ -1,6 +1,6 @@
 from disnake.ext.commands import Cog
 
-from context_var import bot
+from .context_var import bot
 
 
 class GeneralCog(Cog):
