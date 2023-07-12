@@ -3,12 +3,14 @@ from typing import TYPE_CHECKING, Any
 
 from disnake.ext.commands import InteractionBot
 
-from .context_var import bot, env
+from .context_var import bot, env, interaction
 from .logger import default_logger
 
 if TYPE_CHECKING:
     from logging import Logger
     from typing import Any, Self
+
+    from disnake import AppCmdInter
 
     from .config import Config
     from .mode import Modes
@@ -64,3 +66,7 @@ class Lux(InteractionBot):
         self.logger.info("The bot is ready")
         self.logger.info(f"User: {self.user}")
         self.logger.info(f"User ID: {self.user.id}")
+
+    async def on_application_command(self, inter: AppCmdInter):
+        interaction.set(inter)
+        await self.process_application_commands(inter)
