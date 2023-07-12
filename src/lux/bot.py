@@ -73,6 +73,6 @@ class Lux(InteractionBot):
         self.logger.info(f"User: {self.user}")
         self.logger.info(f"User ID: {self.user.id}")
 
-    async def on_application_command(self, inter: AppCmdInter):
+    async def on_application_command(self, inter: "AppCmdInter"):
         interaction.set(inter)
         await self.process_application_commands(inter)
