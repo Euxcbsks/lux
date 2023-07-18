@@ -1,2 +1,2 @@
 # lux
-Lightweight Python Discord Bot bot framework
+Lightweight Python Discord bot framework
