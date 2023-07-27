@@ -104,8 +104,10 @@ class Lux(InteractionBot):
 
     def init(self) -> "Self":
         logger = self._logger
+        logger.info("Start initialization.")
         bot.set(self)
         self.load_extensions(self._config.extension_directory)
+        logger.info("Finish initialization.")
 
         if self._mode.is_dev() and not self._disable_debug_extra_init:
             logger.info("Start debug extra initialization.")
@@ -116,6 +118,7 @@ class Lux(InteractionBot):
 
     def run(self, *args: "Any", **kwargs: "Any") -> None:
         if not (token := env.get().get_bot_token(self._mode)):
+            self._logger.exception("No bot token provided")
             raise ValueError("No bot token provided")
         return super().run(token, *args, **kwargs)
 
