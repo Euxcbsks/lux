@@ -30,6 +30,7 @@ class Lux(InteractionBot):
         mode: "Modes",
         config: "Config",
         logger: "Logger" = default_logger,
+        disable_debug_extra_init: bool = False,
         **options,
     ):
         is_dev = mode.is_dev()
@@ -39,6 +40,7 @@ class Lux(InteractionBot):
         self.mode = mode
         self.config = config
         self.logger = logger
+        self._disable_debug_extra_init = disable_debug_extra_init
         self._unloaded_extensions = list[str]()
 
     @property
