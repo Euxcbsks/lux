@@ -12,6 +12,7 @@ from disnake.ext.commands.errors import (
 
 from .context_var import bot, env, interaction
 from .logger import default_logger
+from .utility import Development
 
 if TYPE_CHECKING:
     from logging import Logger
@@ -102,8 +103,15 @@ class Lux(InteractionBot):
         self._try_extension(super().unload_extension, name, package=package)
 
     def init(self) -> "Self":
+        logger = self._logger
         bot.set(self)
         self.load_extensions(self._config.extension_directory)
+
+        if self._mode.is_dev() and not self._disable_debug_extra_init:
+            logger.info("Start debug extra initialization.")
+            logger.info(f"Add '{Development.__name__}' cog")
+            self.add_cog(Development())
+            logger.info("Finish debug extra initialization.")
         return self
 
     def run(self, *args: "Any", **kwargs: "Any") -> None:
