@@ -40,6 +40,12 @@ env = option(
     default=PathType(".env"),
     show_default=True,
 )
+disable_debug_extra_init = option(
+    "--disable-debug-extra-init",
+    type=bool,
+    default=False,
+    show_default=True,
+)
 
 
 def process_mode(mode: str):
@@ -80,8 +86,13 @@ def process_env(env_path: PathType):
 @mode
 @config
 @env
-def default_entry(mode: str, config: PathType, env: PathType):
+@disable_debug_extra_init
+def default_entry(
+    mode: str, config: PathType, env: PathType, disable_debug_extra_init: bool
+):
     mode_ = process_mode(mode)
     config_ = process_config(config)
     process_env(env)
-    Lux(mode=mode_, config=config_).init().run()
+    Lux(
+        mode=mode_, config=config_, disable_debug_extra_init=disable_debug_extra_init
+    ).init().run()
