@@ -37,11 +37,27 @@ class Lux(InteractionBot):
         super().__init__(
             reload=is_dev, test_guilds=config.test_guilds if is_dev else None, **options
         )
-        self.mode = mode
-        self.config = config
-        self.logger = logger
+        self._mode = mode
+        self._config = config
+        self._logger = logger
         self._disable_debug_extra_init = disable_debug_extra_init
         self._unloaded_extensions = list[str]()
+
+    @property
+    def mode(self) -> "Modes":
+        return self._mode
+
+    @property
+    def config(self) -> "Config":
+        return self._config
+
+    @property
+    def logger(self) -> "Logger":
+        return self._logger
+
+    @property
+    def disable_debug_extra_init(self) -> bool:
+        return self._disable_debug_extra_init
 
     @property
     def unloaded_extensions(self) -> list[str]:
@@ -50,7 +66,7 @@ class Lux(InteractionBot):
     def _try_extension(
         self, operation: "Callable", name: str, *, package: str | None = None
     ):
-        logger = self.logger
+        logger = self._logger
 
         try:
             operation(name, package=package)
@@ -66,39 +82,39 @@ class Lux(InteractionBot):
             logger.exception(f"Extension '{name}' failed to load", e)
 
     def load_extension(self, name: str, *, package: str | None = None) -> None:
-        self.logger.info(f"Loading extension '{name}'")
+        self._logger.info(f"Loading extension '{name}'")
         self._try_extension(super().load_extension, name, package=package)
 
     def load_extensions(self, path: str) -> None:
         if not (path_ := Path(path).resolve()).exists():
             raise ValueError(f"Provided path '{path_}' does not exist")
 
-        self.logger.info(f"Loading extensions from '{path_}'")
+        self._logger.info(f"Loading extensions from '{path_}'")
         super().load_extensions(path)
 
     def reload_extension(self, name: str, *, package: str | None = None) -> None:
-        self.logger.info(f"Reloading extension '{name}'")
+        self._logger.info(f"Reloading extension '{name}'")
         self._try_extension(super().reload_extension, name, package=package)
 
     def unload_extension(self, name: str, *, package: str | None = None) -> None:
-        self.logger.info(f"Unloading extension '{name}'")
+        self._logger.info(f"Unloading extension '{name}'")
         self._unloaded_extensions.append(name)
         self._try_extension(super().unload_extension, name, package=package)
 
     def init(self) -> "Self":
         bot.set(self)
-        self.load_extensions(self.config.extension_directory)
+        self.load_extensions(self._config.extension_directory)
         return self
 
     def run(self, *args: "Any", **kwargs: "Any") -> None:
-        if not (token := env.get().get_bot_token(self.mode)):
+        if not (token := env.get().get_bot_token(self._mode)):
             raise ValueError("No bot token provided")
         return super().run(token, *args, **kwargs)
 
     async def on_ready(self) -> None:
-        self.logger.info("The bot is ready")
-        self.logger.info(f"User: {self.user}")
-        self.logger.info(f"User ID: {self.user.id}")
+        self._logger.info("The bot is ready")
+        self._logger.info(f"User: {self.user}")
+        self._logger.info(f"User ID: {self.user.id}")
 
     async def on_application_command(self, inter: "AppCmdInter"):
         interaction.set(inter)
