@@ -1,16 +1,26 @@
-[project]
+[tool.poetry]
 name = "lux-discord"
-version = "0.0.1"
-authors = [{ name = "Euxcbsks", email = "hawhaw02030746@gmail.com" }]
-description = "Python Discord bot framework"
-requires-python = ">=3.11"
-dependencies = ["click", "disnake"]
+version = "0.1.0"
+description = "Lightweight Python Discord bot framework"
+authors = ["Euxcbsks <hawhaw02030746@gmail.com>"]
+license = "MIT license"
+readme = "README.md"
+packages = [{ include = "src/lux" }]
 
-[project.optional-dependencies]
+[tool.poetry.dependencies]
+python = "^3.11"
+click = "^8.1.6"
+disnake = "^2.9.0"
+
+python-dotenv = { version = "^1.0.0", optional = true }
+colorlog = { version = "^6.7.0", optional = true }
+beanie = { version = "^1.20.0", optional = true }
+
+[tool.poetry.extras]
 dotenv = ["python-dotenv"]
 colorlog = ["colorlog"]
 mongodb = ["beanie"]
 
 [build-system]
-requires = ["setuptools >= 65.5.0"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
