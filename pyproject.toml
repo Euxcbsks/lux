@@ -1,28 +1,16 @@
 [project]
-name="lux-discord"
-version="0.0.1"
-authors = [
-    {name="Euxcbsks", email="hawhaw02030746@gmail.com"}
-]
+name = "lux-discord"
+version = "0.0.1"
+authors = [{ name = "Euxcbsks", email = "hawhaw02030746@gmail.com" }]
 description = "Python Discord bot framework"
 requires-python = ">=3.11"
-dependencies = [
-    "click",
-    "disnake",
-    "motor",
-    "pymongo[srv]"
-]
+dependencies = ["click", "disnake"]
 
 [project.optional-dependencies]
-dotenv = [
-    "python-dotenv"
-]
-colorlog = [
-    "colorlog"
-]
+dotenv = ["python-dotenv"]
+colorlog = ["colorlog"]
+mongodb = ["motor", "pymongo[srv]"]
 
 [build-system]
-requires = [
-    "setuptools >= 65.5.0"
-]
+requires = ["setuptools >= 65.5.0"]
 build-backend = "setuptools.build_meta"
