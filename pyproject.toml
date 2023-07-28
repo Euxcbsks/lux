@@ -9,7 +9,7 @@ dependencies = ["click", "disnake"]
 [project.optional-dependencies]
 dotenv = ["python-dotenv"]
 colorlog = ["colorlog"]
-mongodb = ["motor", "pymongo[srv]"]
+mongodb = ["beanie"]
 
 [build-system]
 requires = ["setuptools >= 65.5.0"]
