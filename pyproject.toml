@@ -5,7 +5,7 @@ description = "Lightweight Python Discord bot framework"
 authors = ["Euxcbsks <hawhaw02030746@gmail.com>"]
 license = "MIT license"
 readme = "README.md"
-packages = [{ include = "src/lux" }]
+packages = [{ include = "lux", from = "src" }]
 
 [tool.poetry.dependencies]
 python = "^3.11"
