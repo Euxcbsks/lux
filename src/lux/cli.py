@@ -3,7 +3,7 @@ from pathlib import Path as PathType
 from click import Choice, Path, command, option
 
 from .bot import Lux
-from .config import Config
+from .config import DEFAULT_CONFIG_PATH, Config
 from .context_var import env as env_var
 from .context_var import mode as mode_var
 from .env import Env
@@ -30,7 +30,7 @@ config = option(
     "-C",
     "--config",
     type=Path(dir_okay=False, resolve_path=True, path_type=PathType),
-    default=PathType("config.toml"),
+    default=DEFAULT_CONFIG_PATH,
     show_default=True,
 )
 env = option(

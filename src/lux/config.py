@@ -8,6 +8,7 @@ if TYPE_CHECKING:
     from pathlib import Path
     from typing import Any, Self
 
+DEFAULT_CONFIG_PATH = Path("config.toml")
 
 class _ConfigKey(StrEnum):
     EXTENSION_DIRECTORY = "extension_directory"
