@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
     from disnake import AppCmdInter
 
-    from .config import Config
+    from .config import CogConfig, Config
     from .mode import Modes
 
 
@@ -30,6 +30,7 @@ class Lux(InteractionBot):
         *,
         mode: "Modes",
         config: "Config",
+        cog_config: "CogConfig",
         logger: "Logger" = default_logger,
         disable_debug_extra_init: bool = False,
         **options,
@@ -40,6 +41,7 @@ class Lux(InteractionBot):
         )
         self._mode = mode
         self._config = config
+        self._cog_config = cog_config
         self._logger = logger
         self._disable_debug_extra_init = disable_debug_extra_init
         self._unloaded_extensions = list[str]()
@@ -51,6 +53,10 @@ class Lux(InteractionBot):
     @property
     def config(self) -> "Config":
         return self._config
+
+    @property
+    def cog_config(self) -> "CogConfig":
+        return self._cog_config
 
     @property
     def logger(self) -> "Logger":

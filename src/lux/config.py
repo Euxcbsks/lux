@@ -9,6 +9,8 @@ if TYPE_CHECKING:
     from typing import Any, Self
 
 DEFAULT_CONFIG_PATH = Path("config.toml")
+DEFAULT_COG_CONFIG_PATH = Path("cog_config.toml")
+
 
 class _ConfigKey(StrEnum):
     EXTENSION_DIRECTORY = "extension_directory"
@@ -47,6 +49,20 @@ class Config:
                 "production": {_ConfigKey.EXTENSION_DIRECTORY: "extension"},
             }
         )
+
+    @classmethod
+    def load_from_path(cls, path: "Path") -> "Self":
+        with path.open("rb") as f:
+            return cls(load(f))
+
+
+class CogConfig:
+    def __init__(self, data: "dict[str, Any]") -> None:
+        self._all_data = data
+
+    @classmethod
+    def default(cls) -> "Self":
+        return cls({})
 
     @classmethod
     def load_from_path(cls, path: "Path") -> "Self":

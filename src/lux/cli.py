@@ -3,7 +3,7 @@ from pathlib import Path as PathType
 from click import Choice, Path, command, option
 
 from .bot import Lux
-from .config import DEFAULT_CONFIG_PATH, Config
+from .config import DEFAULT_COG_CONFIG_PATH, DEFAULT_CONFIG_PATH, CogConfig, Config
 from .context_var import env as env_var
 from .context_var import mode as mode_var
 from .env import Env
@@ -31,6 +31,13 @@ config = option(
     "--config",
     type=Path(dir_okay=False, resolve_path=True, path_type=PathType),
     default=DEFAULT_CONFIG_PATH,
+    show_default=True,
+)
+cog_config = option(
+    "-CF",
+    "--cog-config",
+    type=Path(dir_okay=False, resolve_path=True, path_type=PathType),
+    default=DEFAULT_COG_CONFIG_PATH,
     show_default=True,
 )
 env = option(
@@ -68,6 +75,14 @@ def process_config(config_path: PathType):
         return Config.load_from_path(config_path)
 
 
+def process_cog_config(cog_config_path: PathType) -> CogConfig:
+    if cog_config_path.exists():
+        default_logger.info(f"Using cog config file '{cog_config_path}'.")
+        return CogConfig.load_from_path(cog_config_path)
+    default_logger.warning(f"File '{cog_config_path}' does not exist.")
+    return CogConfig.default()
+
+
 def process_env(env_path: PathType):
     if not env_path.exists():
         default_logger.warning(f"File '{env_path}' does not exist.")
@@ -85,14 +100,24 @@ def process_env(env_path: PathType):
 @command
 @mode
 @config
+@cog_config
 @env
 @disable_debug_extra_init
 def default_entry(
-    mode: str, config: PathType, env: PathType, disable_debug_extra_init: bool
+    mode: str,
+    config: PathType,
+    cog_config: PathType,
+    env: PathType,
+    disable_debug_extra_init: bool,
 ):
     mode_ = process_mode(mode)
     config_ = process_config(config)
+    cog_config_ = process_cog_config(cog_config)
     process_env(env)
+
     Lux(
-        mode=mode_, config=config_, disable_debug_extra_init=disable_debug_extra_init
+        mode=mode_,
+        config=config_,
+        cog_config=cog_config_,
+        disable_debug_extra_init=disable_debug_extra_init,
     ).init().run()
