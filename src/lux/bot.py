@@ -86,7 +86,7 @@ class Lux(InteractionBot):
         except NoEntryPointError:
             logger.error(f"Extension '{name}' has no entry point ('setup' function)")
         except ExtensionFailed as e:
-            logger.exception(f"Extension '{name}' failed to load", e)
+            logger.exception(f"Extension '{name}' failed to load", exc_info=e)
 
     def load_extension(self, name: str, *, package: str | None = None) -> None:
         self._logger.info(f"Loading extension '{name}'")
