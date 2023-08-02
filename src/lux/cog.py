@@ -12,6 +12,7 @@ class GeneralCog(Cog):
         super().__init__()
         self._bot = bot.get()
         self._config_data = self._bot.cog_config.get_data(self.__class__.__name__)
+        self.logger = self._bot.logger.getChild(self.__class__.__name__)
 
     @cached_property
     def config(self):
