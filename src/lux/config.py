@@ -1,11 +1,11 @@
 from enum import StrEnum
+from pathlib import Path
 from tomllib import load
 from typing import TYPE_CHECKING
 
 from .context_var import mode
 
 if TYPE_CHECKING:
-    from pathlib import Path
     from typing import Any, Self
 
 DEFAULT_CONFIG_PATH = Path("config.toml")
@@ -51,7 +51,7 @@ class Config:
         )
 
     @classmethod
-    def load_from_path(cls, path: "Path") -> "Self":
+    def load_from_path(cls, path: Path) -> "Self":
         with path.open("rb") as f:
             return cls(load(f))
 
@@ -60,11 +60,14 @@ class CogConfig:
     def __init__(self, data: "dict[str, Any]") -> None:
         self._all_data = data
 
+    def get_data(self, cog_name: str) -> "dict[str, Any]":
+        return self._all_data.get(cog_name, {})
+
     @classmethod
     def default(cls) -> "Self":
         return cls({})
 
     @classmethod
-    def load_from_path(cls, path: "Path") -> "Self":
+    def load_from_path(cls, path: Path) -> "Self":
         with path.open("rb") as f:
             return cls(load(f))
