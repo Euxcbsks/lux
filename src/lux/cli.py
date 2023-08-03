@@ -26,21 +26,21 @@ mode = option(
     default="dev",
     show_default=True,
 )
-config = option(
+config_path = option(
     "-C",
     "--config",
     type=Path(dir_okay=False, resolve_path=True, path_type=PathType),
     default=DEFAULT_CONFIG_PATH,
     show_default=True,
 )
-cog_config = option(
+cog_config_path = option(
     "-CF",
     "--cog-config",
     type=Path(dir_okay=False, resolve_path=True, path_type=PathType),
     default=DEFAULT_COG_CONFIG_PATH,
     show_default=True,
 )
-env = option(
+env_path = option(
     "-E",
     "--env",
     type=Path(dir_okay=False, resolve_path=True, path_type=PathType),
@@ -66,7 +66,7 @@ def process_mode(mode: str):
     return mode_
 
 
-def process_config(config_path: PathType):
+def process_config_path(config_path: PathType):
     if not config_path.exists():
         default_logger.warning(f"File '{config_path}' does not exist.")
         return Config.default()
@@ -75,7 +75,7 @@ def process_config(config_path: PathType):
         return Config.load_from_path(config_path)
 
 
-def process_cog_config(cog_config_path: PathType) -> CogConfig:
+def process_cog_config_path(cog_config_path: PathType) -> CogConfig:
     if cog_config_path.exists():
         default_logger.info(f"Using cog config file '{cog_config_path}'.")
         return CogConfig.load_from_path(cog_config_path)
@@ -83,7 +83,7 @@ def process_cog_config(cog_config_path: PathType) -> CogConfig:
     return CogConfig.default()
 
 
-def process_env(env_path: PathType):
+def process_env_path(env_path: PathType):
     if not env_path.exists():
         default_logger.warning(f"File '{env_path}' does not exist.")
     elif not dotenv:
@@ -99,25 +99,25 @@ def process_env(env_path: PathType):
 
 @command
 @mode
-@config
-@cog_config
-@env
+@config_path
+@cog_config_path
+@env_path
 @disable_debug_extra_init
 def default_entry(
     mode: str,
-    config: PathType,
-    cog_config: PathType,
-    env: PathType,
+    config_path: PathType,
+    cog_config_path: PathType,
+    env_path: PathType,
     disable_debug_extra_init: bool,
 ):
-    mode_ = process_mode(mode)
-    config_ = process_config(config)
-    cog_config_ = process_cog_config(cog_config)
-    process_env(env)
+    mode = process_mode(mode)
+    config = process_config_path(config_path)
+    cog_config = process_cog_config_path(cog_config_path)
+    process_env_path(env_path)
 
     Lux(
-        mode=mode_,
-        config=config_,
-        cog_config=cog_config_,
+        mode=mode,
+        config=config,
+        cog_config=cog_config,
         disable_debug_extra_init=disable_debug_extra_init,
     ).init().run()
