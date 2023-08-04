@@ -55,7 +55,7 @@ disable_debug_extra_init = option(
 )
 
 
-def process_mode(mode: str):
+def process_mode(mode: str) -> Modes:
     if (mode_ := Modes(mode.lower())).is_dev():
         from logging import DEBUG
 
@@ -66,7 +66,7 @@ def process_mode(mode: str):
     return mode_
 
 
-def process_config_path(config_path: PathType):
+def process_config_path(config_path: PathType) -> Config:
     if not config_path.exists():
         default_logger.warning(f"File '{config_path}' does not exist.")
         return Config.default()
@@ -83,7 +83,7 @@ def process_cog_config_path(cog_config_path: PathType) -> CogConfig:
     return CogConfig.default()
 
 
-def process_env_path(env_path: PathType):
+def process_env_path(env_path: PathType) -> None:
     if not env_path.exists():
         default_logger.warning(f"File '{env_path}' does not exist.")
     elif not dotenv:
@@ -109,7 +109,7 @@ def default_entry(
     cog_config_path: PathType,
     env_path: PathType,
     disable_debug_extra_init: bool,
-):
+) -> None:
     mode = process_mode(mode)
     config = process_config_path(config_path)
     cog_config = process_cog_config_path(cog_config_path)
