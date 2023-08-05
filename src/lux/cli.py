@@ -61,7 +61,7 @@ def process_mode(mode: str) -> Modes:
 
         default_logger.setLevel(DEBUG)
 
-    mode_var.set(mode_.fullname)
+    mode_var.set(mode_)
     default_logger.info(f"Running in '{mode}' mode.")
     return mode_
 
