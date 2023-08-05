@@ -10,6 +10,7 @@ if TYPE_CHECKING:
 
 DEFAULT_CONFIG_PATH = Path("config.toml")
 DEFAULT_COG_CONFIG_PATH = Path("cog_config.toml")
+DEFAULT_EXTENSION_DIRECTORY = "extension"
 
 
 class _BotConfigKey(StrEnum):
@@ -43,10 +44,12 @@ class Config:
         return cls(
             {
                 "development": {
-                    _BotConfigKey.EXTENSION_DIRECTORY: "extension",
+                    _BotConfigKey.EXTENSION_DIRECTORY: DEFAULT_EXTENSION_DIRECTORY,
                     _BotConfigKey.TEST_GUILDS: [],
                 },
-                "production": {_BotConfigKey.EXTENSION_DIRECTORY: "extension"},
+                "production": {
+                    _BotConfigKey.EXTENSION_DIRECTORY: DEFAULT_EXTENSION_DIRECTORY
+                },
             }
         )
 
