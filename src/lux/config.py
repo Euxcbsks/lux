@@ -12,7 +12,7 @@ DEFAULT_CONFIG_PATH = Path("config.toml")
 DEFAULT_COG_CONFIG_PATH = Path("cog_config.toml")
 
 
-class _ConfigKey(StrEnum):
+class _BotConfigKey(StrEnum):
     EXTENSION_DIRECTORY = "extension_directory"
     TEST_GUILDS = "test_guilds"
 
@@ -22,12 +22,12 @@ class Config:
         self._all_data = data
         self._mode_data: "dict[str, Any]" = self._all_data[mode.get().name.lower()]
         self._extension_directory: str = self._all_data.get(
-            _ConfigKey.EXTENSION_DIRECTORY,
-            self._mode_data[_ConfigKey.EXTENSION_DIRECTORY],
+            _BotConfigKey.EXTENSION_DIRECTORY,
+            self._mode_data[_BotConfigKey.EXTENSION_DIRECTORY],
         )
         self._test_guilds: list[int] = self._all_data.get(
-            _ConfigKey.TEST_GUILDS, []
-        ) + self._mode_data.get(_ConfigKey.TEST_GUILDS, [])
+            _BotConfigKey.TEST_GUILDS, []
+        ) + self._mode_data.get(_BotConfigKey.TEST_GUILDS, [])
 
     @property
     def extension_directory(self) -> str:
@@ -43,10 +43,10 @@ class Config:
         return cls(
             {
                 "development": {
-                    _ConfigKey.EXTENSION_DIRECTORY: "extension",
-                    _ConfigKey.TEST_GUILDS: [],
+                    _BotConfigKey.EXTENSION_DIRECTORY: "extension",
+                    _BotConfigKey.TEST_GUILDS: [],
                 },
-                "production": {_ConfigKey.EXTENSION_DIRECTORY: "extension"},
+                "production": {_BotConfigKey.EXTENSION_DIRECTORY: "extension"},
             }
         )
 
