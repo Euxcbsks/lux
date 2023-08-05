@@ -1,4 +1,5 @@
-from enum import Enum, StrEnum, auto
+from enum import StrEnum, auto
+from typing import Literal
 
 
 class Modes(StrEnum):
@@ -9,12 +10,12 @@ class Modes(StrEnum):
     PRODUCT = auto()
     PRODUCTION = auto()
 
-    def is_dev(self):
+    def is_dev(self) -> bool:
         return self in [self.DEV, self.DEVELOP, self.DEVELOPMENT]
 
-    def is_prod(self):
+    def is_prod(self) -> bool:
         return self in [self.PROD, self.PRODUCT, self.PRODUCTION]
 
     @property
-    def fullname(self):
-        return self.DEVELOPMENT if self.is_dev() else self.PRODUCTION
+    def fullname(self) -> Literal["DEVELOPMENT", "PRODUCTION"]:
+        return self.DEVELOPMENT.name if self.is_dev() else self.PRODUCTION.name
