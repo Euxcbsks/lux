@@ -51,7 +51,7 @@ env_path = option(
 disable_debug_extra_init = option(
     "--disable-debug-extra-init",
     "disable_debug_extra_init",
-    type=bool,
+    is_flag=True,
     default=False,
     show_default=True,
 )
