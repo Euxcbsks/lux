@@ -67,25 +67,32 @@ def process_is_production(is_production: bool):
 
 
 def process_config_path(config_path: PathType) -> Config:
-    if not config_path.exists():
-        default_logger.warning(f"File '{config_path}' does not exist.")
-        return Config.default()
-    else:
+    if config_path.exists():
         default_logger.info(f"Using config file '{config_path}'.")
         return Config.load_from_path(config_path)
+
+    default_logger.warning(
+        f"File '{config_path}' does not exist. Use default config data"
+    )
+    return Config.default()
 
 
 def process_cog_config_path(cog_config_path: PathType) -> CogConfig:
     if cog_config_path.exists():
         default_logger.info(f"Using cog config file '{cog_config_path}'.")
         return CogConfig.load_from_path(cog_config_path)
-    default_logger.warning(f"File '{cog_config_path}' does not exist.")
+
+    default_logger.warning(
+        f"File '{cog_config_path}' does not exist. Use default cog config data"
+    )
     return CogConfig.default()
 
 
 def process_env_path(env_path: PathType) -> None:
     if not env_path.exists():
-        default_logger.warning(f"File '{env_path}' does not exist.")
+        default_logger.warning(
+            f"File '{env_path}' does not exist. Skip loading .env file."
+        )
     elif not dotenv:
         default_logger.warning(
             "'python-dotenv' is not installed. Skip loading .env file."
