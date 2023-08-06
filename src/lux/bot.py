@@ -117,7 +117,7 @@ class Lux(InteractionBot):
         self.load_extensions(self._config.extension_directory)
         logger.info("Finish initialization.")
 
-        if not (self._production and self._disable_debug_extra_init):
+        if not (self._production or self._disable_debug_extra_init):
             logger.info("Start debug extra initialization.")
             logger.info(f"Add '{Development.__name__}' cog")
             self.add_cog(Development())
