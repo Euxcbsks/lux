@@ -19,6 +19,7 @@ except ImportError:
 is_production = option(
     "-P",
     "--production",
+    "is_production",
     is_flag=True,
     default=False,
     show_default=True,
@@ -26,6 +27,7 @@ is_production = option(
 config_path = option(
     "-C",
     "--config",
+    "config_path",
     type=Path(dir_okay=False, resolve_path=True, path_type=PathType),
     default=DEFAULT_CONFIG_PATH,
     show_default=True,
@@ -33,6 +35,7 @@ config_path = option(
 cog_config_path = option(
     "-CF",
     "--cog-config",
+    "cog_config_path",
     type=Path(dir_okay=False, resolve_path=True, path_type=PathType),
     default=DEFAULT_COG_CONFIG_PATH,
     show_default=True,
@@ -40,12 +43,14 @@ cog_config_path = option(
 env_path = option(
     "-E",
     "--env",
+    "env_path",
     type=Path(dir_okay=False, resolve_path=True, path_type=PathType),
     default=PathType(".env"),
     show_default=True,
 )
 disable_debug_extra_init = option(
     "--disable-debug-extra-init",
+    "disable_debug_extra_init",
     type=bool,
     default=False,
     show_default=True,
