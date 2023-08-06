@@ -118,10 +118,14 @@ class Lux(InteractionBot):
         logger.info("Finish initialization.")
 
         if not (self._production or self._disable_debug_extra_init):
+            logger.info("Detected that 'debug extra initialization' is not disabled.")
             logger.info("Start debug extra initialization.")
             logger.info(f"Add '{Development.__name__}' cog")
             self.add_cog(Development())
             logger.info("Finish debug extra initialization.")
+            logger.info(
+                "You can disable this behavior by passing '--disable-debug-extra-init' at startup"
+            )
         return self
 
     def run(self, *args: "Any", **kwargs: "Any") -> None:
