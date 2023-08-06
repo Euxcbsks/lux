@@ -88,7 +88,7 @@ def process_env_path(env_path: PathType) -> None:
         default_logger.warning(f"File '{env_path}' does not exist.")
     elif not dotenv:
         default_logger.warning(
-            "'python-dotenv' is not installed. Skipping load .env file."
+            "'python-dotenv' is not installed. Skip loading .env file."
         )
     else:
         default_logger.info(f"Using .env file '{env_path}'.")
