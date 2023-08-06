@@ -94,7 +94,9 @@ class Lux(InteractionBot):
 
     def load_extensions(self, path: str) -> None:
         if not (path_ := Path(path).resolve()).exists():
-            raise ValueError(f"Provided path '{path_}' does not exist")
+            return self._logger.warning(
+                f"Path '{path_}' does not exist. Skip loading extension from this path"
+            )
 
         self._logger.info(f"Loading extensions from '{path_}'")
         super().load_extensions(path)
