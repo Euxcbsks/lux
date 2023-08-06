@@ -130,8 +130,8 @@ class Lux(InteractionBot):
 
     def run(self, *args: "Any", **kwargs: "Any") -> None:
         if not (token := env.get().get_bot_token()):
-            self._logger.error("No bot token provided")
-            raise ValueError("No bot token provided")
+            self._logger.error("No bot token provided.")
+            raise ValueError("No bot token provided.")
         return super().run(token, *args, **kwargs)
 
     async def on_ready(self) -> None:
