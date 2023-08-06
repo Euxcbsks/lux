@@ -1,14 +1,14 @@
+from logging import DEBUG
 from pathlib import Path as PathType
 
-from click import Choice, Path, command, option
+from click import Path, command, option
 
 from .bot import Lux
 from .config import DEFAULT_COG_CONFIG_PATH, DEFAULT_CONFIG_PATH, CogConfig, Config
 from .context_var import env as env_var
-from .context_var import mode as mode_var
+from .context_var import is_production as is_production_var
 from .env import Env
 from .logger import default_logger
-from .mode import Modes
 
 try:
     import dotenv  # type: ignore
@@ -16,14 +16,11 @@ except ImportError:
     dotenv = None
 
 
-mode = option(
-    "-M",
-    "--mode",
-    type=Choice(
-        [str(mode.name) for mode in Modes],
-        case_sensitive=False,
-    ),
-    default="dev",
+is_production = option(
+    "-P",
+    "--production",
+    is_flag=True,
+    default=False,
     show_default=True,
 )
 config_path = option(
@@ -55,15 +52,13 @@ disable_debug_extra_init = option(
 )
 
 
-def process_mode(mode: str) -> Modes:
-    if (mode_ := Modes(mode.lower())).is_dev():
-        from logging import DEBUG
-
+def process_is_production(is_production: bool):
+    if not is_production:
         default_logger.setLevel(DEBUG)
 
-    mode_var.set(mode_)
-    default_logger.info(f"Running in '{mode}' mode.")
-    return mode_
+    default_logger.info(f"Running in {'production' if is_production else 'debug'} mode.")
+    is_production_var.set(is_production)
+    return is_production
 
 
 def process_config_path(config_path: PathType) -> Config:
@@ -98,25 +93,25 @@ def process_env_path(env_path: PathType) -> None:
 
 
 @command
-@mode
+@is_production
 @config_path
 @cog_config_path
 @env_path
 @disable_debug_extra_init
 def default_entry(
-    mode: str,
+    is_production: bool,
     config_path: PathType,
     cog_config_path: PathType,
     env_path: PathType,
     disable_debug_extra_init: bool,
 ) -> None:
-    mode = process_mode(mode)
+    production = process_is_production(is_production)
     config = process_config_path(config_path)
     cog_config = process_cog_config_path(cog_config_path)
     process_env_path(env_path)
 
     Lux(
-        mode=mode,
+        production=production,
         config=config,
         cog_config=cog_config,
         disable_debug_extra_init=disable_debug_extra_init,

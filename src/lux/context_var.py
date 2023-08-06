@@ -6,9 +6,8 @@ if TYPE_CHECKING:
 
     from .bot import Lux
     from .env import Env
-    from .mode import Modes
 
-mode: "ContextVar[Modes]" = ContextVar("mode")
+is_production: "ContextVar[bool]" = ContextVar("is_production")
 env: "ContextVar[Env]" = ContextVar("env")
 bot: "ContextVar[Lux]" = ContextVar("bot")
 interaction: "ContextVar[AppCmdInter]" = ContextVar("interaction")

@@ -3,7 +3,7 @@ from pathlib import Path
 from tomllib import load
 from typing import TYPE_CHECKING
 
-from .context_var import mode
+from .context_var import is_production
 
 if TYPE_CHECKING:
     from typing import Any, Self
@@ -21,7 +21,9 @@ class _BotConfigKey(StrEnum):
 class Config:
     def __init__(self, data: "dict[str, Any]") -> None:
         self._all_data = data
-        self._mode_data: "dict[str, Any]" = self._all_data[mode.get().name.lower()]
+        self._mode_data: "dict[str, Any]" = self._all_data[
+            "production" if is_production.get() else "development"
+        ]
         self._extension_directory: str = self._all_data.get(
             _BotConfigKey.EXTENSION_DIRECTORY,
             self._mode_data[_BotConfigKey.EXTENSION_DIRECTORY],

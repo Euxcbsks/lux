@@ -21,25 +21,25 @@ if TYPE_CHECKING:
     from disnake import AppCmdInter
 
     from .config import CogConfig, Config
-    from .mode import Modes
 
 
 class Lux(InteractionBot):
     def __init__(
         self,
         *,
-        mode: "Modes",
+        production: bool,
         config: "Config",
         cog_config: "CogConfig",
         logger: "Logger" = default_logger,
         disable_debug_extra_init: bool = False,
         **options,
     ):
-        is_dev = mode.is_dev()
         super().__init__(
-            reload=is_dev, test_guilds=config.test_guilds if is_dev else None, **options
+            reload=not production,
+            test_guilds=None if production else config.test_guilds,
+            **options,
         )
-        self._mode = mode
+        self._production = production
         self._config = config
         self._cog_config = cog_config
         self._logger = logger
@@ -47,8 +47,8 @@ class Lux(InteractionBot):
         self._unloaded_extensions = list[str]()
 
     @property
-    def mode(self) -> "Modes":
-        return self._mode
+    def production(self) -> bool:
+        return self._production
 
     @property
     def config(self) -> "Config":
@@ -115,7 +115,7 @@ class Lux(InteractionBot):
         self.load_extensions(self._config.extension_directory)
         logger.info("Finish initialization.")
 
-        if self._mode.is_dev() and not self._disable_debug_extra_init:
+        if not (self._production and self._disable_debug_extra_init):
             logger.info("Start debug extra initialization.")
             logger.info(f"Add '{Development.__name__}' cog")
             self.add_cog(Development())
@@ -123,8 +123,8 @@ class Lux(InteractionBot):
         return self
 
     def run(self, *args: "Any", **kwargs: "Any") -> None:
-        if not (token := env.get().get_bot_token(self._mode)):
-            self._logger.exception("No bot token provided")
+        if not (token := env.get().get_bot_token()):
+            self._logger.error("No bot token provided")
             raise ValueError("No bot token provided")
         return super().run(token, *args, **kwargs)
 
