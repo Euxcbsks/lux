@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from disnake.ext.commands import InteractionBot
 from disnake.ext.commands.errors import (
