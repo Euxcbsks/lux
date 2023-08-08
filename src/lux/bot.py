@@ -70,9 +70,7 @@ class Lux(InteractionBot):
     def unloaded_extensions(self) -> list[str]:
         return self._unloaded_extensions
 
-    def _try_extension(
-        self, operation: "Callable", name: str, *, package: str | None = None
-    ):
+    def _try_extension(self, operation: "Callable", name: str, *, package: str | None = None):
         logger = self._logger
 
         try:
@@ -94,9 +92,7 @@ class Lux(InteractionBot):
 
     def load_extensions(self, path: str) -> None:
         if not (path_ := Path(path).resolve()).exists():
-            return self._logger.warning(
-                f"Path '{path_}' does not exist. Skip loading extension from this path"
-            )
+            return self._logger.warning(f"Path '{path_}' does not exist. Skip loading extension from this path")
 
         self._logger.info(f"Loading extensions from '{path_}'")
         super().load_extensions(path)
@@ -123,9 +119,7 @@ class Lux(InteractionBot):
             logger.info(f"Add '{Development.__name__}' cog")
             self.add_cog(Development())
             logger.info("Finish debug extra initialization.")
-            logger.info(
-                "You can disable this behavior by passing '--disable-debug-extra-init' at startup"
-            )
+            logger.info("You can disable this behavior by passing '--disable-debug-extra-init' at startup")
         return self
 
     def run(self, *args: "Any", **kwargs: "Any") -> None:

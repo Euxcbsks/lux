@@ -21,9 +21,7 @@ class GeneralCog(Cog):
         try:
             return config_type(**self._config_data)
         except Exception as e:
-            self.logger.exception(
-                f"Failed while converting config data to '{config_type}'", exc_info=e
-            )
+            self.logger.exception(f"Failed while converting config data to '{config_type}'", exc_info=e)
 
     @property
     def bot(self):

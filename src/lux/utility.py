@@ -28,7 +28,9 @@ async def send_ephemeral(
     flags: "MessageFlags" = MISSING,
     delete_after: float = MISSING,
 ):
-    """Same as `disnake.interaction.application_command.ApplicationCommandInteraction.send` but set `ephemeral` to `True`"""
+    """
+    Same as `disnake.interaction.application_command.ApplicationCommandInteraction.send` but set `ephemeral` to `True`
+    """
     await interaction.get().send(
         content,
         embed=embed,
@@ -54,25 +56,19 @@ class Development(GeneralCog):
         return None
 
     @extension.sub_command()
-    async def load(
-        self, inter: AppCmdInter, name: str = Param(autocomplete=unloaded_extension)
-    ):
+    async def load(self, inter: AppCmdInter, name: str = Param(autocomplete=unloaded_extension)):
         self.bot._logger.debug(f"Loading extension '{name}'")
         self.bot.load_extension(name)
         await send_ephemeral(f"Loaded extension `{name}`")
 
     @extension.sub_command()
-    async def reload(
-        self, inter: AppCmdInter, name: str = Param(autocomplete=loaded_extension)
-    ):
+    async def reload(self, inter: AppCmdInter, name: str = Param(autocomplete=loaded_extension)):
         self.bot._logger.debug(f"Reloading extension '{name}'")
         self.bot.reload_extension(name)
         await send_ephemeral(f"Reloaded extension `{name}`")
 
     @extension.sub_command()
-    async def unload(
-        self, inter: AppCmdInter, name: str = Param(autocomplete=loaded_extension)
-    ):
+    async def unload(self, inter: AppCmdInter, name: str = Param(autocomplete=loaded_extension)):
         self.bot._logger.debug(f"Unloading extension '{name}'")
         self.bot.unload_extension(name)
         await send_ephemeral(f"Unloaded extension `{name}`")
