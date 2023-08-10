@@ -63,11 +63,11 @@ class RootConfigData:
         return self.all.get(RootConfigKey.GLOBAL, {})
 
     @property
-    def development(self):
+    def development(self) -> dict[str, Any]:
         return self.all.get(RootConfigKey.DEVELOPMENT, {})
 
     @property
-    def production(self):
+    def production(self) -> dict[str, Any]:
         return self.all.get(RootConfigKey.PRODUCTION, {})
 
     @property
@@ -140,11 +140,11 @@ class CogConfig:
         self._data = data
 
     @classmethod
-    def default(cls):
+    def default(cls) -> Self:
         return cls(RootConfigData())
 
     @classmethod
-    def load_from_path(cls, path: Path):
+    def load_from_path(cls, path: Path) -> Self:
         return cls(RootConfigData.load_from_path(path))
 
     def get_data(self, cog_name: str) -> dict[str, Any]:
