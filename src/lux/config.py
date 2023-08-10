@@ -19,9 +19,9 @@ DEFAULT_EXTENSION_DIRECTORY = "extension"
 
 
 class RootConfigKey(StrEnum):
-    GLOBAL = "global"
-    DEVELOPMENT = "development"
-    PRODUCTION = "production"
+    GLOBAL = "GLOBAL"
+    DEVELOPMENT = "DEVELOPMENT"
+    PRODUCTION = "PRODUCTION"
 
 
 class _BotConfigKey(StrEnum):

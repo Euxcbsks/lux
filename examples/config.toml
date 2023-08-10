@@ -1,12 +1,11 @@
-# Global config avaliable
-# example below
-
+[GLOBAL]
+# Root global config avaliable
 # extension_directory = "extension"
 
-[development]
+[DEVELOPMENT]
 # Path to the extension directory.
 extension_directory = "extension"
 test_guilds = []
 
-[production]
+[PRODUCTION]
 extension_directory = "extension"
