@@ -40,22 +40,6 @@ DictOfStrAnyValidator = TypeAdapter(dict[str, Any])
 class RootConfigData:
     all: RootConfigDataType = Field(default_factory=lambda: DEFAULT_RAW_ROOT_DATA)
 
-    @property
-    def global_(self) -> dict[str, Any]:
-        return self.all.get(RootConfigKey.GLOBAL, {})
-
-    @property
-    def development(self):
-        return self.all.get(RootConfigKey.DEVELOPMENT, {})
-
-    @property
-    def production(self):
-        return self.all.get(RootConfigKey.PRODUCTION, {})
-
-    @property
-    def mode(self) -> dict[str, Any]:
-        return self.production if is_production.get() else self.development
-
     @classmethod
     def load_from_path(cls, path: Path) -> Self:
         try:
@@ -74,6 +58,22 @@ class RootConfigData:
             default_logger.exception("Failed while validation root config data structure", exc_info=e)
             raise e
 
+    @property
+    def root_global(self) -> dict[str, Any]:
+        return self.all.get(RootConfigKey.GLOBAL, {})
+
+    @property
+    def development(self):
+        return self.all.get(RootConfigKey.DEVELOPMENT, {})
+
+    @property
+    def production(self):
+        return self.all.get(RootConfigKey.PRODUCTION, {})
+
+    @property
+    def mode(self) -> dict[str, Any]:
+        return self.production if is_production.get() else self.development
+
     @overload
     def find(self, key: str) -> Any | None:
         ...
@@ -83,7 +83,7 @@ class RootConfigData:
         ...
 
     def find(self, key: str, default: Any = None) -> Any:
-        return self.mode.get(key, self.global_.get(key, default))
+        return self.mode.get(key, self.root_global.get(key, default))
 
     @overload
     def find_all(self, key: str) -> tuple[Any | None, Any | None]:
@@ -94,7 +94,7 @@ class RootConfigData:
         ...
 
     def find_all(self, key: str, default: Any = None) -> tuple[Any, Any]:
-        return self.mode.get(key, default), self.global_.get(key, default)
+        return self.mode.get(key, default), self.root_global.get(key, default)
 
 
 class Config:
@@ -139,6 +139,14 @@ class CogConfig:
     def __init__(self, data: RootConfigData) -> None:
         self._data = data
 
+    @classmethod
+    def default(cls):
+        return cls(RootConfigData())
+
+    @classmethod
+    def load_from_path(cls, path: Path):
+        return cls(RootConfigData.load_from_path(path))
+
     def get_data(self, cog_name: str) -> dict[str, Any]:
         data = self._data.find(cog_name, {})
 
@@ -147,11 +155,3 @@ class CogConfig:
         except ValidationError as e:
             default_logger.exception(f"Failed while validation cog config data '{cog_name}'", exc_info=e)
             raise e
-
-    @classmethod
-    def default(cls):
-        return cls(RootConfigData())
-
-    @classmethod
-    def load_from_path(cls, path: Path):
-        return cls(RootConfigData.load_from_path(path))
