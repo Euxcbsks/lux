@@ -147,6 +147,17 @@ class CogConfig:
     def load_from_path(cls, path: Path) -> Self:
         return cls(RootConfigData.load_from_path(path))
 
+    @cached_property
+    def mode_global(self) -> dict[str, Any]:
+        data = self._data.mode.get(RootConfigKey.GLOBAL, {})
+
+        try:
+            return DictOfStrAnyValidator.validate_python(data)
+        except ValidationError as e:
+            mode = RootConfigKey.PRODUCTION if is_production.get() else RootConfigKey.DEVELOPMENT
+            default_logger.exception(f"Failed while validation mode({mode}) global cog config data", exc_info=e)
+            raise e
+
     def get_data(self, cog_name: str) -> dict[str, Any]:
         data = self._data.find(cog_name, {})
 
@@ -155,3 +166,31 @@ class CogConfig:
         except ValidationError as e:
             default_logger.exception(f"Failed while validation cog config data '{cog_name}'", exc_info=e)
             raise e
+
+    @overload
+    def find(self, key: str, /) -> Any | None:
+        ...
+
+    @overload
+    def find(self, key: str, default: _DEFAULT_TYPE = None, /) -> Any | _DEFAULT_TYPE:
+        ...
+
+    def find(self, key: str, default: Any = None, /) -> Any:
+        return self._data.mode.get(key, self.mode_global.get(key, self._data.root_global.get(key, default)))
+
+    @overload
+    def find_all(self, key: str) -> tuple[Any | None, Any | None, Any | None]:
+        ...
+
+    @overload
+    def find_all(
+        self, key: str, default: _DEFAULT_TYPE = None
+    ) -> tuple[Any | _DEFAULT_TYPE, Any | _DEFAULT_TYPE, Any | _DEFAULT_TYPE]:
+        ...
+
+    def find_all(self, key: str, default: Any = None) -> tuple[Any, Any, Any]:
+        return (
+            self._data.mode.get(key, default),
+            self.mode_global.get(key, default),
+            self._data.root_global.get(key, default),
+        )

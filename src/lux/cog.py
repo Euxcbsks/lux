@@ -1,4 +1,5 @@
 from functools import cached_property
+from inspect import signature
 from typing import get_type_hints
 
 from disnake.ext.commands import Cog
@@ -18,8 +19,12 @@ class GeneralCog(Cog):
         if not (config_type := get_type_hints(self).get("config")):
             return self._config_data
 
+        config_data = self._config_data.copy()
+        missing = signature(config_type).parameters.keys() - self._config_data.keys()
+        config_data |= {name: value for name in missing if (value := self._bot.cog_config.find(name)) is not None}
+
         try:
-            return config_type(**self._config_data)
+            return config_type(**config_data)
         except Exception as e:
             self.logger.exception(f"Failed while converting config data to '{config_type}'", exc_info=e)
             raise e
