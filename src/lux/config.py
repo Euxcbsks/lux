@@ -4,6 +4,7 @@ from pathlib import Path
 from tomllib import TOMLDecodeError, load
 from typing import Any, Self, TypeVar, overload
 
+from disnake import Intents
 from pydantic import Field, TypeAdapter, ValidationError
 from pydantic.dataclasses import dataclass
 
@@ -27,6 +28,8 @@ class RootConfigKey(StrEnum):
 class _BotConfigKey(StrEnum):
     EXTENSION_DIRECTORY = "extension_directory"
     TEST_GUILDS = "test_guilds"
+    INTENT_TYPE = "intent_type"
+    INTENT_FLAG = "intent_flag"
 
 
 DEFAULT_RAW_ROOT_DATA = {RootConfigKey.GLOBAL: {}, RootConfigKey.PRODUCTION: {}, RootConfigKey.DEVELOPMENT: {}}
@@ -34,6 +37,7 @@ RootConfigDataType = dict[RootConfigKey, dict[str, Any]]
 RootConfigDataValidator = TypeAdapter(RootConfigDataType)
 ListOfIntValidator = TypeAdapter(list[int])
 DictOfStrAnyValidator = TypeAdapter(dict[str, Any])
+DictOfStrBoolValidator = TypeAdapter(dict[str, bool])
 
 
 @dataclass(frozen=True)
@@ -101,6 +105,21 @@ class Config:
     def __init__(self, data: RootConfigData) -> None:
         self._data = data
 
+    @classmethod
+    def default(cls) -> Self:
+        data = DEFAULT_RAW_ROOT_DATA.copy() | {
+            RootConfigKey.DEVELOPMENT: {
+                _BotConfigKey.EXTENSION_DIRECTORY: DEFAULT_EXTENSION_DIRECTORY,
+                _BotConfigKey.TEST_GUILDS: [],
+            },
+            RootConfigKey.PRODUCTION: {_BotConfigKey.EXTENSION_DIRECTORY: DEFAULT_EXTENSION_DIRECTORY},
+        }
+        return cls(RootConfigData(RootConfigDataValidator.validate_python(data)))
+
+    @classmethod
+    def load_from_path(cls, path: Path) -> Self:
+        return cls(RootConfigData.load_from_path(path))
+
     @property
     def extension_directory(self) -> str:
         return str(self._data.find(_BotConfigKey.EXTENSION_DIRECTORY, DEFAULT_EXTENSION_DIRECTORY))
@@ -119,20 +138,27 @@ class Config:
             )
             raise e
 
-    @classmethod
-    def default(cls) -> Self:
-        data = DEFAULT_RAW_ROOT_DATA.copy() | {
-            RootConfigKey.DEVELOPMENT: {
-                _BotConfigKey.EXTENSION_DIRECTORY: DEFAULT_EXTENSION_DIRECTORY,
-                _BotConfigKey.TEST_GUILDS: [],
-            },
-            RootConfigKey.PRODUCTION: {_BotConfigKey.EXTENSION_DIRECTORY: DEFAULT_EXTENSION_DIRECTORY},
-        }
-        return cls(RootConfigData(RootConfigDataValidator.validate_python(data)))
+    @cached_property
+    def intents(self) -> Intents:
+        intent_type = str(self._data.find(_BotConfigKey.INTENT_TYPE, Intents.default.__name__))
 
-    @classmethod
-    def load_from_path(cls, path: Path) -> Self:
-        return cls(RootConfigData.load_from_path(path))
+        if intent_type not in [Intents.default.__name__, Intents.all.__name__, Intents.none.__name__]:
+            message = f"Invalid intent type '{intent_type}'"
+            default_logger.error(message)
+            raise ValueError(message)
+
+        intent: Intents = getattr(Intents, intent_type)()
+
+        if not (intent_flag := DictOfStrBoolValidator.validate_python(self._data.find(_BotConfigKey.INTENT_FLAG, {}))):
+            return intent
+
+        try:
+            intent_modify = Intents(**intent_flag)
+        except TypeError as e:
+            default_logger.exception(str(e), exc_info=e)
+            raise e
+
+        return intent | intent_modify
 
 
 class CogConfig:

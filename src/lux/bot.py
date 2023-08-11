@@ -37,6 +37,7 @@ class Lux(InteractionBot):
         super().__init__(
             reload=not production,
             test_guilds=None if production else config.test_guilds,
+            intents=config.intents,
             **options,
         )
         self._production = production

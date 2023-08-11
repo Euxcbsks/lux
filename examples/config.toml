@@ -1,6 +1,8 @@
 [GLOBAL]
 # Root global config avaliable
 # extension_directory = "extension"
+# intent_type = "default"
+# intent_flag = { "message" = true }
 
 [DEVELOPMENT]
 # Path to the extension directory.
