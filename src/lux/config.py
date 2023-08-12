@@ -25,7 +25,7 @@ class RootConfigKey(StrEnum):
     PRODUCTION = "PRODUCTION"
 
 
-class _BotConfigKey(StrEnum):
+class BotConfigKey(StrEnum):
     EXTENSION_DIRECTORY = "extension_directory"
     TEST_GUILDS = "test_guilds"
     INTENT_TYPE = "intent_type"
@@ -109,10 +109,10 @@ class BotConfig:
     def default(cls) -> Self:
         data = DEFAULT_RAW_ROOT_DATA.copy() | {
             RootConfigKey.DEVELOPMENT: {
-                _BotConfigKey.EXTENSION_DIRECTORY: DEFAULT_EXTENSION_DIRECTORY,
-                _BotConfigKey.TEST_GUILDS: [],
+                BotConfigKey.EXTENSION_DIRECTORY: DEFAULT_EXTENSION_DIRECTORY,
+                BotConfigKey.TEST_GUILDS: [],
             },
-            RootConfigKey.PRODUCTION: {_BotConfigKey.EXTENSION_DIRECTORY: DEFAULT_EXTENSION_DIRECTORY},
+            RootConfigKey.PRODUCTION: {BotConfigKey.EXTENSION_DIRECTORY: DEFAULT_EXTENSION_DIRECTORY},
         }
         return cls(RootConfigData(RootConfigDataValidator.validate_python(data)))
 
@@ -122,25 +122,25 @@ class BotConfig:
 
     @property
     def extension_directory(self) -> str:
-        return str(self._data.find(_BotConfigKey.EXTENSION_DIRECTORY, DEFAULT_EXTENSION_DIRECTORY))
+        return str(self._data.find(BotConfigKey.EXTENSION_DIRECTORY, DEFAULT_EXTENSION_DIRECTORY))
 
     @cached_property
     def test_guilds(self) -> list[int]:
         result = []
-        for _ in self._data.find_all(_BotConfigKey.TEST_GUILDS, []):
+        for _ in self._data.find_all(BotConfigKey.TEST_GUILDS, []):
             result.extend(_)
 
         try:
             return ListOfIntValidator.validate_python(result)
         except ValidationError as e:
             default_logger.exception(
-                f"Failed while validation bot config data '{_BotConfigKey.TEST_GUILDS}'", exc_info=e
+                f"Failed while validation bot config data '{BotConfigKey.TEST_GUILDS}'", exc_info=e
             )
             raise e
 
     @cached_property
     def intents(self) -> Intents:
-        intent_type = str(self._data.find(_BotConfigKey.INTENT_TYPE, Intents.default.__name__))
+        intent_type = str(self._data.find(BotConfigKey.INTENT_TYPE, Intents.default.__name__))
 
         if intent_type not in [Intents.default.__name__, Intents.all.__name__, Intents.none.__name__]:
             message = f"Invalid intent type '{intent_type}'"
@@ -149,7 +149,7 @@ class BotConfig:
 
         intent: Intents = getattr(Intents, intent_type)()
 
-        if not (intent_flag := DictOfStrBoolValidator.validate_python(self._data.find(_BotConfigKey.INTENT_FLAG, {}))):
+        if not (intent_flag := DictOfStrBoolValidator.validate_python(self._data.find(BotConfigKey.INTENT_FLAG, {}))):
             return intent
 
         try:
