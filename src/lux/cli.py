@@ -4,7 +4,7 @@ from pathlib import Path as PathType
 from click import Path, command, option
 
 from .bot import Lux
-from .config import DEFAULT_COG_CONFIG_PATH, DEFAULT_CONFIG_PATH, CogConfig, Config
+from .config import DEFAULT_BOT_CONFIG_PATH, DEFAULT_COG_CONFIG_PATH, BotConfig, CogConfig
 from .context_var import env as env_var
 from .context_var import is_production as is_production_var
 from .env import Env
@@ -24,12 +24,12 @@ is_production = option(
     default=False,
     show_default=True,
 )
-config_path = option(
-    "-C",
-    "--config",
-    "config_path",
+bot_config_path = option(
+    "-BC",
+    "--bot-config",
+    "bot_config_path",
     type=Path(dir_okay=False, resolve_path=True, path_type=PathType),
-    default=DEFAULT_CONFIG_PATH,
+    default=DEFAULT_BOT_CONFIG_PATH,
     show_default=True,
 )
 cog_config_path = option(
@@ -66,13 +66,13 @@ def process_is_production(is_production: bool):
     return is_production
 
 
-def process_config_path(config_path: PathType) -> Config:
-    if config_path.exists():
-        default_logger.info(f"Using config file '{config_path}'.")
-        return Config.load_from_path(config_path)
+def process_bot_config_path(bot_config_path: PathType) -> BotConfig:
+    if bot_config_path.exists():
+        default_logger.info(f"Using bot config file '{bot_config_path}'.")
+        return BotConfig.load_from_path(bot_config_path)
 
-    default_logger.warning(f"File '{config_path}' does not exist. Use default config data")
-    return Config.default()
+    default_logger.warning(f"File '{bot_config_path}' does not exist. Use default bot config data")
+    return BotConfig.default()
 
 
 def process_cog_config_path(cog_config_path: PathType) -> CogConfig:
@@ -98,25 +98,25 @@ def process_env_path(env_path: PathType) -> None:
 
 @command
 @is_production
-@config_path
+@bot_config_path
 @cog_config_path
 @env_path
 @disable_debug_extra_init
 def default_entry(
     is_production: bool,
-    config_path: PathType,
+    bot_config_path: PathType,
     cog_config_path: PathType,
     env_path: PathType,
     disable_debug_extra_init: bool,
 ) -> None:
     production = process_is_production(is_production)
-    config = process_config_path(config_path)
+    bot_config = process_bot_config_path(bot_config_path)
     cog_config = process_cog_config_path(cog_config_path)
     process_env_path(env_path)
 
     Lux(
         production=production,
-        config=config,
+        bot_config=bot_config,
         cog_config=cog_config,
         disable_debug_extra_init=disable_debug_extra_init,
     ).init().run()

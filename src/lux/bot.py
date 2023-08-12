@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
     from disnake import AppCmdInter
 
-    from .config import CogConfig, Config
+    from .config import BotConfig, CogConfig
 
 
 class Lux(InteractionBot):
@@ -28,7 +28,7 @@ class Lux(InteractionBot):
         self,
         *,
         production: bool,
-        config: "Config",
+        bot_config: "BotConfig",
         cog_config: "CogConfig",
         logger: "Logger" = default_logger,
         disable_debug_extra_init: bool = False,
@@ -36,12 +36,12 @@ class Lux(InteractionBot):
     ):
         super().__init__(
             reload=not production,
-            test_guilds=None if production else config.test_guilds,
-            intents=config.intents,
+            test_guilds=None if production else bot_config.test_guilds,
+            intents=bot_config.intents,
             **options,
         )
         self._production = production
-        self._config = config
+        self._bot_config = bot_config
         self._cog_config = cog_config
         self._logger = logger
         self._disable_debug_extra_init = disable_debug_extra_init
@@ -52,8 +52,8 @@ class Lux(InteractionBot):
         return self._production
 
     @property
-    def config(self) -> "Config":
-        return self._config
+    def bot_config(self) -> "BotConfig":
+        return self._bot_config
 
     @property
     def cog_config(self) -> "CogConfig":
@@ -111,7 +111,7 @@ class Lux(InteractionBot):
         logger = self._logger
         logger.info("Start initialization.")
         bot.set(self)
-        self.load_extensions(self._config.extension_directory)
+        self.load_extensions(self._bot_config.extension_directory)
         logger.info("Finish initialization.")
 
         if not (self._production or self._disable_debug_extra_init):

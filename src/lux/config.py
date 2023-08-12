@@ -14,7 +14,7 @@ from .logger import default_logger
 # For type hint
 _DEFAULT_TYPE = TypeVar("_DEFAULT_TYPE")
 
-DEFAULT_CONFIG_PATH = Path("config.toml")
+DEFAULT_BOT_CONFIG_PATH = Path("bot_config.toml")
 DEFAULT_COG_CONFIG_PATH = Path("cog_config.toml")
 DEFAULT_EXTENSION_DIRECTORY = "extension"
 
@@ -101,7 +101,7 @@ class RootConfigData:
         return self.mode.get(key, default), self.root_global.get(key, default)
 
 
-class Config:
+class BotConfig:
     def __init__(self, data: RootConfigData) -> None:
         self._data = data
 
