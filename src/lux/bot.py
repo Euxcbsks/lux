@@ -77,15 +77,15 @@ class Lux(InteractionBot):
         try:
             operation(name, package=package)
         except ExtensionNotFound:
-            logger.error(f"Extension '{name}' not found")
+            logger.error(f"Extension '{name}' not found.")
         except ExtensionNotLoaded:
-            logger.error(f"Extension '{name}' not loaded")
+            logger.error(f"Extension '{name}' not loaded.")
         except ExtensionAlreadyLoaded:
-            logger.error(f"Extension '{name}' already loaded")
+            logger.error(f"Extension '{name}' already loaded.")
         except NoEntryPointError:
-            logger.error(f"Extension '{name}' has no entry point ('setup' function)")
+            logger.error(f"Extension '{name}' has no entry point ('setup' function).")
         except ExtensionFailed as e:
-            logger.exception(f"Extension '{name}' failed to load", exc_info=e)
+            logger.exception(f"Extension '{name}' failed to load.", exc_info=e)
 
     def load_extension(self, name: str, *, package: str | None = None) -> None:
         self._logger.info(f"Loading extension '{name}'")
@@ -93,17 +93,17 @@ class Lux(InteractionBot):
 
     def load_extensions(self, path: str) -> None:
         if not (path_ := Path(path).resolve()).exists():
-            return self._logger.warning(f"Path '{path_}' does not exist. Skip loading extension from this path")
+            return self._logger.warning(f"Path '{path_}' does not exist. Skip loading extension from this path.")
 
-        self._logger.info(f"Loading extensions from '{path_}'")
+        self._logger.info(f"Loading extensions from '{path_}'.")
         super().load_extensions(path)
 
     def reload_extension(self, name: str, *, package: str | None = None) -> None:
-        self._logger.info(f"Reloading extension '{name}'")
+        self._logger.info(f"Reloading extension '{name}'.")
         self._try_extension(super().reload_extension, name, package=package)
 
     def unload_extension(self, name: str, *, package: str | None = None) -> None:
-        self._logger.info(f"Unloading extension '{name}'")
+        self._logger.info(f"Unloading extension '{name}'.")
         self._unloaded_extensions.append(name)
         self._try_extension(super().unload_extension, name, package=package)
 
@@ -117,10 +117,10 @@ class Lux(InteractionBot):
         if not (self._production or self._disable_debug_extra_init):
             logger.info("Detected that 'debug extra initialization' is not disabled.")
             logger.info("Start debug extra initialization.")
-            logger.info(f"Add '{Development.__name__}' cog")
+            logger.info(f"Add '{Development.__name__}' cog.")
             self.add_cog(Development())
             logger.info("Finish debug extra initialization.")
-            logger.info("You can disable this behavior by passing '--disable-debug-extra-init' at startup")
+            logger.info("You can disable this behavior by passing '--disable-debug-extra-init' at startup.")
         return self
 
     def run(self, *args: "Any", **kwargs: "Any") -> None:
@@ -130,7 +130,7 @@ class Lux(InteractionBot):
         return super().run(token, *args, **kwargs)
 
     async def on_ready(self) -> None:
-        self._logger.info("The bot is ready")
+        self._logger.info("The bot is ready.")
         self._logger.info(f"User: {self.user}")
         self._logger.info(f"User ID: {self.user.id}")
 

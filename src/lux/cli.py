@@ -71,7 +71,7 @@ def process_bot_config_path(bot_config_path: PathType) -> BotConfig:
         default_logger.info(f"Using bot config file '{bot_config_path}'.")
         return BotConfig.load_from_path(bot_config_path)
 
-    default_logger.warning(f"File '{bot_config_path}' does not exist. Use default bot config data")
+    default_logger.warning(f"File '{bot_config_path}' does not exist. Use default bot config data.")
     return BotConfig.default()
 
 
@@ -80,7 +80,7 @@ def process_cog_config_path(cog_config_path: PathType) -> CogConfig:
         default_logger.info(f"Using cog config file '{cog_config_path}'.")
         return CogConfig.load_from_path(cog_config_path)
 
-    default_logger.warning(f"File '{cog_config_path}' does not exist. Use default cog config data")
+    default_logger.warning(f"File '{cog_config_path}' does not exist. Use default cog config data.")
     return CogConfig.default()
 
 

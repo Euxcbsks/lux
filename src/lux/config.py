@@ -134,7 +134,7 @@ class BotConfig:
             return ListOfIntValidator.validate_python(result)
         except ValidationError as e:
             default_logger.exception(
-                f"Failed while validation bot config data '{BotConfigKey.TEST_GUILDS}'", exc_info=e
+                f"Failed while validation bot config data '{BotConfigKey.TEST_GUILDS}'.", exc_info=e
             )
             raise e
 
@@ -143,7 +143,7 @@ class BotConfig:
         intent_type = str(self._data.find(BotConfigKey.INTENT_TYPE, Intents.default.__name__))
 
         if intent_type not in [Intents.default.__name__, Intents.all.__name__, Intents.none.__name__]:
-            message = f"Invalid intent type '{intent_type}'"
+            message = f"Invalid intent type '{intent_type}'."
             default_logger.error(message)
             raise ValueError(message)
 
@@ -181,7 +181,7 @@ class CogConfig:
             return DictOfStrAnyValidator.validate_python(data)
         except ValidationError as e:
             mode = RootConfigKey.PRODUCTION if is_production.get() else RootConfigKey.DEVELOPMENT
-            default_logger.exception(f"Failed while validation mode({mode}) global cog config data", exc_info=e)
+            default_logger.exception(f"Failed while validation mode({mode}) global cog config data.", exc_info=e)
             raise e
 
     def get_data(self, cog_name: str) -> dict[str, Any]:
@@ -190,7 +190,7 @@ class CogConfig:
         try:
             return DictOfStrAnyValidator.validate_python(data)
         except ValidationError as e:
-            default_logger.exception(f"Failed while validation cog config data '{cog_name}'", exc_info=e)
+            default_logger.exception(f"Failed while validation cog config data '{cog_name}'.", exc_info=e)
             raise e
 
     @overload
