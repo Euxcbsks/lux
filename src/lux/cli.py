@@ -33,7 +33,7 @@ bot_config_path = option(
     show_default=True,
 )
 cog_config_path = option(
-    "-CF",
+    "-CC",
     "--cog-config",
     "cog_config_path",
     type=Path(dir_okay=False, resolve_path=True, path_type=PathType),
